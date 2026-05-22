@@ -109,7 +109,55 @@
       <div class="pagination" id="pagination"></div>
 
     </main>
+<!-- DETAIL MODAL -->
+    <div id="detail-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-overlay" id="modal-overlay"></div>
+      <div class="modal-content">
+        <button class="modal-close" id="modal-close">✕</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
 
-    
+
+    <!-- NOTITIES MODAL (Formulier validatie) -->
+    <div id="notes-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-overlay" id="notes-overlay"></div>
+      <div class="modal-content" style="max-width:480px">
+        <button class="modal-close" id="notes-close">&#x2715;</button>
+        <div style="padding:1.5rem">
+          <h2 style="font-family:'Bangers',cursive;font-size:1.8rem;letter-spacing:2px;color:var(--db-yellow);margin-bottom:1.2rem">
+            &#x1F4DD; Notitie toevoegen
+          </h2>
+          <form id="notes-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="note-name">Naam *</label>
+              <input type="text" id="note-name" class="form-input" placeholder="Bijv. Goku" minlength="2" maxlength="50" required autocomplete="off" />
+              <span class="form-error" id="error-name"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="note-email">E-mail *</label>
+              <input type="email" id="note-email" class="form-input" placeholder="jouw@email.com" required autocomplete="off" />
+              <span class="form-error" id="error-email"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="note-text">Notitie * <small>(min. 10 tekens)</small></label>
+              <textarea id="note-text" class="form-input" rows="4" placeholder="Schrijf hier je notitie..." minlength="10" maxlength="300" required></textarea>
+              <span class="form-error" id="error-note"></span>
+              <span class="char-counter" id="char-counter">0 / 300</span>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="form-submit-btn">&#x1F4BE; Opslaan</button>
+              <button type="button" class="form-cancel-btn" id="notes-cancel">Annuleren</button>
+            </div>
+          </form>
+          <div id="saved-notes" style="margin-top:1.5rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST melding -->
+    <div id="toast" class="toast hidden"></div>
+    <script type="module" src="/src/js/main.js"></script>
+ 
 </body>
 </html>
