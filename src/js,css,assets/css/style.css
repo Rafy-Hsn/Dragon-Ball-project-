@@ -1,0 +1,56 @@
+:root {
+    --db-orange: #f97316;
+    --db-yellow: #fbbf24;
+    --db-gold: #d97706;
+    --db-dark: #1a0a00;
+    --db-dark2: #2d1500;
+    --db-dark3: #3d1f00;
+    --db-card-bg: #2a1200;
+    --db-text: #fff8f0;
+    --db-muted: #c4a882;
+    --db-border: #5c3010;
+    --db-red: #ef4444;
+    --db-blue: #3b82f6;
+    --db-green: #22c55e;
+    --db-purple: #a855f7;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.5);
+    --transition: 0.2s ease;
+}
+
+/* === LIGHT THEMA === */
+[data-theme="light"] {
+  --db-dark: #fff8f0;
+  --db-dark2: #fef3e2;
+  --db-dark3: #fde8c8;
+  --db-card-bg: #ffffff;
+  --db-text: #1a0a00;
+  --db-muted: #78350f;
+  --db-border: #fbbf24;
+  --shadow: 0 4px 24px rgba(249,115,22,0.15);
+}
+
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--db-dark);
+  color: var(--db-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* Subtiele achtergrond textuur */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(249,115,22,0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(251,191,36,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
