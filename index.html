@@ -49,5 +49,67 @@
       </div>
     </div>
     </div>
+    <!-- MAIN APP -->
+    <main id="app">
+
+      <!-- CONTROLS BAR -->
+      <section class="controls-bar" id="controls-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Zoek een personage of planeet..." autocomplete="off" />
+        </div>
+        <div class="filter-wrap" id="filter-wrap">
+          <!-- Filters worden dynamisch geladen per sectie -->
+        </div>
+        <div class="sort-wrap">
+          <label for="sort-select">Sorteren:</label>
+          <select id="sort-select">
+            <option value="name-asc">Naam A→Z</option>
+            <option value="name-desc">Naam Z→A</option>
+            <option value="ki-desc" data-ki="1">Ki Hoogst</option>
+            <option value="ki-asc" data-ki="1">Ki Laagst</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- RESULTS INFO + VIEW TOGGLE -->
+      <div class="results-info" id="results-info">
+        <span id="results-count"></span>
+        <div class="view-toggle" id="view-toggle">
+          <button class="view-btn active" data-view="cards" title="Kaartweergave">⊞ Kaarten</button>
+          <button class="view-btn" data-view="table" title="Tabelweergave">☰ Tabel</button>
+        </div>
+      </div>
+
+      <!-- LOADING SPINNER -->
+      <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+        <p>Data laden...</p>
+      </div>
+
+      <!-- ERROR MESSAGE -->
+      <div id="error-msg" class="error-msg hidden">
+        <span>⚠️</span>
+        <p id="error-text">Er ging iets mis...</p>
+        <button id="retry-btn">Opnieuw proberen</button>
+      </div>
+
+      <!-- CARDS GRID -->
+      <section id="cards-grid" class="cards-grid"></section>
+
+      <!-- TABLE VIEW -->
+      <div id="table-wrap" class="table-wrap hidden">
+        <table id="data-table" class="data-table">
+          <thead id="table-head"></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- PAGINATION -->
+      <div class="pagination" id="pagination"></div>
+
+    </main>
+
+    
 </body>
 </html>
