@@ -15,7 +15,7 @@ import {
 } from './ui.js';
 import { initNotesForm } from './form.js';
 import { initLang, getLang, t } from './lang.js';
-
+import { initKiEffect } from './ki-effect.js';
 
 // APPLICATIE STAAT (state)
 // Eén object dat de huidige toestand van de app bijhoudt
