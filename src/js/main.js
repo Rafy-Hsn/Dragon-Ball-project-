@@ -245,4 +245,66 @@ const switchSection = async (section) => {
   applyFilters(); // Toon de gefilterde en gesorteerde data
 };
 
+//Event Listeners Instellen
+// Koppelt alle gebruikersacties aan de juiste functies
+// Zoekbalk — debounce: wacht 300ms voor we filteren
+// Dit voorkomt dat we bij elke toetsaanslag direct filteren
+let searchTimer = null;
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(searchTimer); // Reset vorige timer
+  // Callback function: wordt uitgevoerd na 300ms pauze
+  searchTimer = setTimeout(() => {
+    state.query = e.target.value.trim();
+    applyFilters();
+  }, 300);
+});
+
+// Sorteer dropdown
+sortSelect.addEventListener('change', (e) => {
+  state.sortMode = e.target.value;
+  applyFilters();
+});
+
+// Navigatie knoppen (Personages, Planeten, Favorieten)
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => switchSection(btn.dataset.section));
+});
+
+// Modal sluiten via overlay klik, sluitknop of Escape toets
+document.getElementById('modal-overlay').addEventListener('click', closeModal);
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Opnieuw proberen knop (bij API fout)
+retryBtn.addEventListener('click', () => switchSection(state.section));
+
+// APP OPSTARTEN
+// Laadt voorkeuren en start de applicatie
+const init = async () => {
+  const prefs = getPreferences(); // Opgeslagen voorkeuren ophalen
+
+  // Thema instellen (bewaard of standaard donker)
+  applyTheme(prefs.theme ?? 'dark');
+
+  // Favoriet badge bijwerken
+  updateFavBadge();
+
+  // Ki achtergrond animatie starten
+  initKiEffect();
+
+  // Taalkeuze initialiseren — geef een callback mee die de
+  // huidige sectie herlaadt wanneer de taal verandert
+  initLang(() => switchSection(state.section));
+
+  // Notitieformulier initialiseren
+  initNotesForm();
+
+  // Start met de opgeslagen sectie (of standaard 'characters')
+  await switchSection(prefs.section ?? 'characters');
+};
+
+// Start de volledige applicatie
+init();
 
