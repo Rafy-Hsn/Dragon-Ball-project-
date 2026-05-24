@@ -197,3 +197,262 @@ const createCharCard = (char, onCardClick) => {
 
   return card; // De voltooide kaart teruggeven
 };
+
+// PLANEET KAART AANMAKEN
+const createPlanetCard = (planet) => {
+  const card = document.createElement('article');
+  card.className = 'planet-card';
+
+  // Status bepalen: vernietigd, intact of onbekend
+  const destroyed = planet.isDestroyed;
+  // Ternary operator voor CSS klasse en label
+  const statusClass = destroyed === true  ? 'status-destroyed'
+                    : destroyed === false ? 'status-alive'
+                    : 'status-unknown';
+  const statusLabel = destroyed === true  ? t('destroyed')
+                    : destroyed === false ? t('intact')
+                    : t('unknown');
+
+  card.innerHTML = `
+    <div class="planet-img-wrap">
+      ${planet.image
+        ? `<img src="${planet.image}" alt="${planet.name}" loading="lazy">`
+        : '<div style="font-size:3rem;opacity:.3">🌍</div>'}
+      <span class="planet-status-badge ${statusClass}">${statusLabel}</span>
+    </div>
+    <div class="card-body">
+      <h3 class="planet-name">${planet.name}</h3>
+      <div class="card-meta">
+        <div><div class="label">${t('status')}</div><div>${statusLabel}</div></div>
+        <div><div class="label">ID</div><div>#${planet.id}</div></div>
+      </div>
+      ${planet.description
+        ? `<p style="font-size:.78rem;color:var(--db-muted);margin-top:.5rem;line-height:1.4;
+            overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">
+            ${planet.description}
+          </p>`
+        : ''}
+    </div>`;
+
+  return card;
+};
+
+// -----------------------------------------------------------
+// TABELWEERGAVE RENDEREN
+// Bouwt een tabel met 8 kolommen voor de personages
+// Techniek: array methode "map" + "join" voor de tabelrijen
+// -----------------------------------------------------------
+const renderTable = (items, onCardClick) => {
+  // Hoofd rij met kolomtitels (8 kolommen)
+  tableHead.innerHTML = `<tr>
+    <th>Foto</th>
+    <th>${t('characters').replace('⚔️ ', '')}</th>
+    <th>${t('race')}</th>
+    <th>${t('gender')}</th>
+    <th>${t('affiliation')}</th>
+    <th>${t('baseKi')}</th>
+    <th>${t('maxKi')}</th>
+    <th>❤️</th>
+  </tr>`;
+
+  // Elke rij aanmaken via map() + template literal
+  // map() zet elk personage om naar een HTML string
+  // join('') plakt alle strings samen tot één grote HTML string
+  tableBody.innerHTML = items.map(c => {
+    const fav = isFavorite(c.id);
+    return `<tr data-id="${c.id}" style="cursor:pointer">
+      <td>${c.image
+        ? `<img class="table-char-img" src="${c.image}" alt="${c.name}" loading="lazy">`
+        : '🐉'}</td>
+      <td><span class="table-name">${c.name}</span></td>
+      <td>${c.race ? `<span class="table-race-badge">${c.race}</span>` : '—'}</td>
+      <td>${c.gender ?? '—'}</td>
+      <td>${c.affiliation ?? '—'}</td>
+      <td>
+        <div class="table-ki-bar">
+          <div class="ki-bar">
+            <div class="ki-fill" style="width:${kiPercent(c.ki)}%"></div>
+          </div>
+          <span class="table-ki-val">${formatKi(c.ki)}</span>
+        </div>
+      </td>
+      <td><span class="table-ki-val">${formatKi(c.maxKi)}</span></td>
+      <td><button class="table-fav-btn" data-id="${c.id}">${fav ? '❤️' : '🤍'}</button></td>
+    </tr>`;
+  }).join('');
+
+  // Events koppelen aan tabelrijen: klik → open modal
+  tableBody.querySelectorAll('tr').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (!e.target.closest('.table-fav-btn')) {
+        onCardClick(Number(row.dataset.id));
+      }
+    });
+  });
+
+  // Events koppelen aan fav knoppen in de tabel
+  tableBody.querySelectorAll('.table-fav-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id   = Number(btn.dataset.id);
+      const char = items.find(c => c.id === id); // Zoek het personage in de array
+      if (!char) return;
+
+      const added = toggleFavorite({
+        id: char.id, name: char.name, image: char.image,
+        race: char.race, ki: char.ki, maxKi: char.maxKi,
+        affiliation: char.affiliation, gender: char.gender,
+      });
+
+      btn.textContent = added ? '❤️' : '🤍';
+      showToast(added ? t('addedFav', char.name) : t('removedFav', char.name));
+      updateFavBadge();
+    });
+  });
+};
+
+// -----------------------------------------------------------
+// KAARTEN RENDEREN
+// Hoofd functie die alle kaarten op het scherm zet
+// Techniek: forEach iteratie, DOM manipulatie
+// -----------------------------------------------------------
+export const renderCards = (items, type, onCardClick) => {
+  hideLoader();
+  cardsGrid.innerHTML = '';
+  if (tableBody) { tableBody.innerHTML = ''; tableHead.innerHTML = ''; }
+  errorMsg.classList.add('hidden');
+
+  // Lege staat tonen als er geen resultaten zijn
+  if (!items || items.length === 0) {
+    cardsGrid.innerHTML = `
+      <div class="empty-message">
+        <span class="empty-icon">🔍</span>
+        <h3>${t('noResults')}</h3>
+        <p>${t('noResultsSub')}</p>
+      </div>`;
+    resultsCount.textContent = '';
+    tableWrap.classList.add('hidden');
+    return;
+  }
+
+  // Aantal resultaten tonen (gebruikt vertaalde tekst)
+  resultsCount.textContent = t('results', items.length);
+
+  // Elke kaart aanmaken en toevoegen aan het grid
+  // forEach iteratie over de items array
+  items.forEach((item, i) => {
+    const card = type === 'characters'
+      ? createCharCard(item, onCardClick)  // Personage kaart
+      : createPlanetCard(item);            // Planeet kaart
+
+    // Kleine vertraging per kaart voor een staggered animatie effect
+    card.style.animationDelay = `${i * 0.04}s`;
+    cardsGrid.appendChild(card);
+  });
+
+  // Tabelweergave ook vullen (alleen voor personages)
+  if (type === 'characters') {
+    renderTable(items, onCardClick);
+    tableWrap.classList.toggle('hidden', currentView === 'cards');
+  } else {
+    tableWrap.classList.add('hidden');
+  }
+
+  // Kaartgrid tonen/verbergen afhankelijk van de huidige weergave
+  cardsGrid.classList.toggle('hidden', currentView === 'table');
+};
+
+// -----------------------------------------------------------
+// FAVORIETEN SECTIE RENDEREN
+// Toont de opgeslagen favorieten van de gebruiker
+// -----------------------------------------------------------
+export const renderFavorites = (onCardClick) => {
+  hideLoader();
+  cardsGrid.innerHTML = '';
+  if (tableBody) { tableBody.innerHTML = ''; tableHead.innerHTML = ''; }
+  filterWrap.innerHTML = '';
+  pagination.innerHTML = '';
+  tableWrap.classList.add('hidden');
+
+  const favs = getFavorites(); // Haal favorieten op uit LocalStorage
+
+  // Lege staat als er geen favorieten zijn
+  if (favs.length === 0) {
+    cardsGrid.innerHTML = `
+      <div class="empty-message">
+        <span class="empty-icon">❤️</span>
+        <h3>${t('noFavs')}</h3>
+        <p>${t('noFavsSub')}</p>
+      </div>`;
+    resultsCount.textContent = '';
+    return;
+  }
+
+  resultsCount.textContent = t('favs', favs.length);
+
+  // Elke favoriet als kaart tonen
+  favs.forEach((item, i) => {
+    const card = createCharCard(item, onCardClick);
+    card.style.animationDelay = `${i * 0.04}s`;
+    cardsGrid.appendChild(card);
+  });
+};
+
+// -----------------------------------------------------------
+// FILTER KNOPPEN RENDEREN
+// Maakt knoppen aan voor elk filteroptie (bv. race types)
+// -----------------------------------------------------------
+export const renderFilters = (options, active, onChange, allLabel) => {
+  filterWrap.innerHTML = ''; // Bestaande filters verwijderen
+
+  // "Alle" knop die alle filters reset
+  const allBtn = document.createElement('button');
+  allBtn.className = `filter-btn${!active ? ' active' : ''}`;
+  allBtn.textContent = allLabel ?? t('all');
+  allBtn.addEventListener('click', () => onChange(null));
+  filterWrap.appendChild(allBtn);
+
+  // Eén knop per filteroptie aanmaken
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = `filter-btn${active === opt ? ' active' : ''}`;
+    btn.textContent = opt;
+    btn.addEventListener('click', () => onChange(opt));
+    filterWrap.appendChild(btn);
+  });
+};
+
+// -----------------------------------------------------------
+// PAGINERING RENDEREN
+// Vorige/Volgende knoppen en paginanummers
+// -----------------------------------------------------------
+export const renderPagination = (page, total, onChange) => {
+  pagination.innerHTML = '';
+  if (total <= 1) return; // Geen paginering nodig bij 1 pagina
+
+  // Vorige pagina knop
+  const prev = document.createElement('button');
+  prev.className = 'page-btn';
+  prev.textContent = '◀';
+  prev.disabled = page === 1; // Uitschakelen op de eerste pagina
+  prev.addEventListener('click', () => onChange(page - 1));
+  pagination.appendChild(prev);
+
+  // Paginanummer knoppen
+  for (let i = 1; i <= total; i++) {
+    const btn = document.createElement('button');
+    // Ternary operator: actieve pagina krijgt 'active' klasse
+    btn.className = `page-btn${i === page ? ' active' : ''}`;
+    btn.textContent = i;
+    btn.addEventListener('click', () => onChange(i));
+    pagination.appendChild(btn);
+  }
+
+  // Volgende pagina knop
+  const next = document.createElement('button');
+  next.className = 'page-btn';
+  next.textContent = '▶';
+  next.disabled = page === total; // Uitschakelen op de laatste pagina
+  next.addEventListener('click', () => onChange(page + 1));
+  pagination.appendChild(next);
+};
