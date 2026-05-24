@@ -912,3 +912,370 @@ padding: 0 1.5rem;
 .empty-message .empty-icon { font-size: 4rem; display: block; margin-bottom: 1rem; opacity: 0.4; }
 .empty-message h3 { font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 0.5rem; }
 
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--db-orange);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: 10px;
+  z-index: 500;
+  box-shadow: var(--shadow);
+  animation: toast-in 0.3s ease;
+  max-width: 280px;
+}
+
+@keyframes toast-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* === UTILITY === */
+.hidden { display: none !important; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .header-inner { flex-wrap: wrap; height: auto; padding: 0.8rem 0; gap: 0.8rem; }
+  .nav-tabs { width: 100%; justify-content: center; }
+  .controls-bar { flex-direction: column; align-items: stretch; }
+  .sort-wrap { width: 100%; }
+  #sort-select { flex: 1; }
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .modal-char-header { flex-direction: column; }
+  .modal-char-img { width: 100%; height: 180px; }
+}
+
+@media (max-width: 480px) {
+  .logo-text { font-size: 1.1rem; }
+  .hero-text h1 { font-size: 2.5rem; }
+  .cards-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+}
+
+/* === FORMULIER VALIDATIE STIJLEN === */
+.form-group {
+  margin-bottom: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-label {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--db-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-label small { font-size: 0.75rem; color: var(--db-muted); text-transform: none; font-weight: 600; }
+
+.form-input {
+  background: var(--db-dark3);
+  border: 1.5px solid var(--db-border);
+  border-radius: var(--radius);
+  color: var(--db-text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  padding: 0.6rem 0.9rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  resize: vertical;
+}
+
+.form-input:focus {
+  border-color: var(--db-orange);
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.2);
+}
+
+/* Validatie states */
+.form-input.input-error {
+  border-color: var(--db-red);
+  box-shadow: 0 0 0 2px rgba(239,68,68,0.2);
+}
+
+.form-input.input-ok {
+  border-color: var(--db-green);
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.15);
+}
+
+.form-error {
+  color: var(--db-red);
+  font-size: 0.78rem;
+  font-weight: 700;
+  min-height: 1rem;
+  display: block;
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: var(--db-muted);
+  text-align: right;
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.form-submit-btn {
+  flex: 1;
+  background: var(--db-orange);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.form-submit-btn:hover { background: var(--db-gold); transform: scale(1.02); }
+
+.form-cancel-btn {
+  background: var(--db-dark3);
+  border: 1.5px solid var(--db-border);
+  border-radius: var(--radius);
+  color: var(--db-muted);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.2rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.form-cancel-btn:hover { background: var(--db-border); color: var(--db-text); }
+
+/* Opgeslagen notities */
+.notes-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.note-item {
+  background: var(--db-dark3);
+  border: 1px solid var(--db-border);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.note-name {
+  font-weight: 800;
+  color: var(--db-yellow);
+  font-size: 0.88rem;
+}
+
+.note-date {
+  font-size: 0.75rem;
+  color: var(--db-muted);
+}
+
+.note-text {
+  font-size: 0.85rem;
+  color: var(--db-text);
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+}
+
+.note-delete-btn {
+  background: transparent;
+  border: 1px solid var(--db-red);
+  color: var(--db-red);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.note-delete-btn:hover { background: var(--db-red); color: #fff; }
+
+/* Toast error variant */
+.toast.toast-error { background: var(--db-red); }
+
+/* === TAALWISSELAAR === */
+.lang-switcher {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.lang-btn {
+  background: var(--db-card-bg);
+  border: 1.5px solid var(--db-border);
+  color: var(--db-muted);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.lang-btn:hover, .lang-btn.active {
+  background: var(--db-orange);
+  border-color: var(--db-orange);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+/* === KI CANVAS ACHTERGROND === */
+#ki-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+/* === TAAL CYCLE KNOP === */
+.lang-cycle-btn {
+  background: var(--db-card-bg);
+  border: 1.5px solid var(--db-border);
+  color: var(--db-text);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.lang-cycle-btn:hover {
+  background: var(--db-orange);
+  border-color: var(--db-orange);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+/* === TAAL DROPDOWN === */
+/* De knop die de dropdown opent */
+.lang-cycle-btn {
+  background: var(--db-card-bg);
+  border: 1.5px solid var(--db-border);
+  color: var(--db-text);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.lang-cycle-btn:hover {
+  background: var(--db-orange);
+  border-color: var(--db-orange);
+  color: #fff;
+}
+
+/* De dropdown container */
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--db-card-bg);
+  border: 1.5px solid var(--db-orange);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  min-width: 180px;
+  z-index: 300;
+  overflow: hidden;
+  animation: dropdown-in 0.15s ease-out;
+}
+
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Titel bovenaan de dropdown */
+.lang-dropdown-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--db-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.6rem 1rem 0.3rem;
+}
+
+/* Elke taaloptie in de dropdown */
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--db-border);
+  color: var(--db-text);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition);
+}
+
+.lang-option:hover { background:  rgba(249, 115, 22, 0.1); }
+
+/* Actieve taal krijgt een oranje achtergrond */
+.lang-option.active {
+  background: var(--db-orange);
+  color: #fff;
+}
+
+.lang-option span {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* De header-actions is relatief gepositioneerd
+   zodat de dropdown er goed onder valt */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+
