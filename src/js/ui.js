@@ -9,10 +9,8 @@ import { isFavorite, toggleFavorite, getFavorites } from './storage.js';
 import { parseKi } from './api.js';
 import { t, translateText, getLang } from './lang.js';
 
-// -----------------------------------------------------------
 // DOM ELEMENTEN SELECTEREN
 // Alle vaste elementen die we in dit bestand gebruiken
-// -----------------------------------------------------------
 const cardsGrid    = document.getElementById('cards-grid');    // Het grid waar kaarten in komen
 const loader       = document.getElementById('loader');         // De laad-spinner
 const errorMsg     = document.getElementById('error-msg');      // Foutmelding blok
@@ -29,10 +27,8 @@ const tableBody    = document.getElementById('table-body');     // Tabel data ri
 // Huidige weergavemodus: 'cards' (kaarten) of 'table' (tabel)
 let currentView = 'cards';
 
-// -----------------------------------------------------------
 // EVENTS: Kaart/Tabel toggle knoppen
 // Wisselt tussen kaartweergave en tabelweergave
-// -----------------------------------------------------------
 document.querySelectorAll('.view-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentView = btn.dataset.view; // Sla de keuze op
@@ -46,11 +42,8 @@ document.querySelectorAll('.view-btn').forEach(btn => {
   });
 });
 
-// -----------------------------------------------------------
 // TOAST MELDING TONEN
 // Toont een korte melding onderaan het scherm (bv. "❤️ Goku toegevoegd!")
-// Techniek: DOM manipulatie, setTimeout (callback function)
-// -----------------------------------------------------------
 let toastTimer = null; // Bewaar de timer zodat we hem kunnen resetten
 
 export const showToast = (msg, type = 'ok') => {
@@ -67,10 +60,8 @@ export const showToast = (msg, type = 'ok') => {
   toastTimer = setTimeout(() => toast.classList.add('hidden'), 3000);
 };
 
-// -----------------------------------------------------------
 // LOADER TONEN
 // Laat de draaiende cirkel zien en verbergt de kaarten
-// -----------------------------------------------------------
 export const showLoader = () => {
   cardsGrid.innerHTML = ''; // Kaarten verwijderen
   if (tableBody) { tableBody.innerHTML = ''; tableHead.innerHTML = ''; }
@@ -82,19 +73,17 @@ export const showLoader = () => {
 // Loader verbergen
 export const hideLoader = () => loader.classList.add('hidden');
 
-// -----------------------------------------------------------
 // FOUTMELDING TONEN
-// -----------------------------------------------------------
+
 export const showError = (msg) => {
   hideLoader();
   errorText.textContent = msg;
   errorMsg.classList.remove('hidden');
 };
 
-// -----------------------------------------------------------
 // FAVORIET BADGE UPDATEN
 // Toont het aantal favorieten als een rode cirkel op de nav knop
-// -----------------------------------------------------------
+
 export const updateFavBadge = () => {
   const n = getFavorites().length;
   favCount.textContent = n;
@@ -102,9 +91,7 @@ export const updateFavBadge = () => {
   favCount.style.display = n > 0 ? 'inline-block' : 'none';
 };
 
-// -----------------------------------------------------------
 // HULPFUNCTIES voor Ki waarden
-// -----------------------------------------------------------
 
 // Ki waarde leesbaar maken (bv. 'Unknown' → '???', 'Infinity' → '∞')
 const formatKi = (ki) => (!ki || ki === 'Unknown') ? '???' : ki === 'Infinity' ? '∞' : ki;
@@ -117,11 +104,9 @@ const kiPercent = (ki) => {
   return Math.min(100, (v / 1_000_000_000_000_000) * 100);
 };
 
-// -----------------------------------------------------------
 // PERSONAGE KAART AANMAKEN
 // Maakt één kaart aan voor een personage en geeft die terug
-// Techniek: DOM element aanmaken, template literal, events koppelen
-// -----------------------------------------------------------
+
 const createCharCard = (char, onCardClick) => {
   // Controleer of dit personage al een favoriet is
   const fav = isFavorite(char.id);
@@ -237,11 +222,8 @@ const createPlanetCard = (planet) => {
   return card;
 };
 
-// -----------------------------------------------------------
 // TABELWEERGAVE RENDEREN
 // Bouwt een tabel met 8 kolommen voor de personages
-// Techniek: array methode "map" + "join" voor de tabelrijen
-// -----------------------------------------------------------
 const renderTable = (items, onCardClick) => {
   // Hoofd rij met kolomtitels (8 kolommen)
   tableHead.innerHTML = `<tr>
@@ -255,9 +237,9 @@ const renderTable = (items, onCardClick) => {
     <th>❤️</th>
   </tr>`;
 
-  // Elke rij aanmaken via map() + template literal
+  // Elke rij aanmaken via map + template literal
   // map() zet elk personage om naar een HTML string
-  // join('') plakt alle strings samen tot één grote HTML string
+  // join plakt alle strings samen tot één grote HTML string
   tableBody.innerHTML = items.map(c => {
     const fav = isFavorite(c.id);
     return `<tr data-id="${c.id}" style="cursor:pointer">
@@ -311,11 +293,8 @@ const renderTable = (items, onCardClick) => {
   });
 };
 
-// -----------------------------------------------------------
 // KAARTEN RENDEREN
 // Hoofd functie die alle kaarten op het scherm zet
-// Techniek: forEach iteratie, DOM manipulatie
-// -----------------------------------------------------------
 export const renderCards = (items, type, onCardClick) => {
   hideLoader();
   cardsGrid.innerHTML = '';
@@ -362,10 +341,8 @@ export const renderCards = (items, type, onCardClick) => {
   cardsGrid.classList.toggle('hidden', currentView === 'table');
 };
 
-// -----------------------------------------------------------
 // FAVORIETEN SECTIE RENDEREN
 // Toont de opgeslagen favorieten van de gebruiker
-// -----------------------------------------------------------
 export const renderFavorites = (onCardClick) => {
   hideLoader();
   cardsGrid.innerHTML = '';
@@ -398,10 +375,8 @@ export const renderFavorites = (onCardClick) => {
   });
 };
 
-// -----------------------------------------------------------
 // FILTER KNOPPEN RENDEREN
 // Maakt knoppen aan voor elk filteroptie (bv. race types)
-// -----------------------------------------------------------
 export const renderFilters = (options, active, onChange, allLabel) => {
   filterWrap.innerHTML = ''; // Bestaande filters verwijderen
 
@@ -422,10 +397,9 @@ export const renderFilters = (options, active, onChange, allLabel) => {
   });
 };
 
-// -----------------------------------------------------------
 // PAGINERING RENDEREN
 // Vorige/Volgende knoppen en paginanummers
-// -----------------------------------------------------------
+
 export const renderPagination = (page, total, onChange) => {
   pagination.innerHTML = '';
   if (total <= 1) return; // Geen paginering nodig bij 1 pagina
@@ -455,4 +429,94 @@ export const renderPagination = (page, total, onChange) => {
   next.disabled = page === total; // Uitschakelen op de laatste pagina
   next.addEventListener('click', () => onChange(page + 1));
   pagination.appendChild(next);
+};
+
+// DETAIL MODAL OPENEN
+// Toont alle informatie van één personage in een popup
+
+export const openCharModal = async (char, lang) => {
+  const modal = document.getElementById('detail-modal');
+  const body  = document.getElementById('modal-body');
+  const fav   = isFavorite(char.id);
+
+   // Transformaties sectie bouwen
+   const transformsHTML = (char.transformations ?? []).length > 0
+    ? `<div class="transformations-section">
+        <h3>⚡ ${t('transformations')} (${char.transformations.length})</h3>
+        <div class="transformations-grid">
+          ${char.transformations.map(tr => `
+            <div class="transform-card">
+              ${tr.image
+                ? `<img src="${tr.image}" alt="${tr.name}" style="width:60px;height:70px;object-fit:contain">`
+                : ''}
+              <span class="t-name">${tr.name}</span>
+              ${tr.ki ? `<span class="t-ki">${tr.ki}</span>` : ''}
+            </div>`).join('')}
+        </div>
+      </div>`
+    : '';
+
+  // Modal inhoud instellen via template literal
+  body.innerHTML = `
+    <div class="modal-char-header">
+      ${char.image ? `<img class="modal-char-img" src="${char.image}" alt="${char.name}">` : ''}
+      <div class="modal-char-info">
+        <h2>${char.name}</h2>
+        ${char.race ? `<span class="race-badge" style="position:static;display:inline-block;margin-bottom:.5rem">${char.race}</span>` : ''}
+        <div class="modal-stats">
+          <div class="modal-stat"><span class="lbl">${t('baseKi')}</span><span>${formatKi(char.ki)}</span></div>
+          <div class="modal-stat"><span class="lbl">${t('maxKi')}</span><span>${formatKi(char.maxKi)}</span></div>
+          <div class="modal-stat"><span class="lbl">${t('gender')}</span><span>${char.gender ?? '—'}</span></div>
+          <div class="modal-stat"><span class="lbl">${t('affiliation')}</span><span>${char.affiliation ?? '—'}</span></div>
+          ${char.originPlanet
+            ? `<div class="modal-stat"><span class="lbl">${t('planet')}</span><span>${char.originPlanet.name}</span></div>`
+            : ''}
+        </div>
+      </div>
+    </div>
+    <p id="modal-desc" style="color:var(--db-muted);line-height:1.6;font-size:.9rem;margin-bottom:1rem;font-style:italic">
+      ${t('translating')}
+    </p>
+    ${transformsHTML}
+    <button class="modal-fav-btn${fav ? ' remove' : ''}" id="modal-fav-btn">
+      ${fav ? t('removeFav') : t('addFav')}
+    </button>`;
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  // Beschrijving vertalen (async — wacht op de vertaal API)
+  const descEl = document.getElementById('modal-desc');
+  if (char.description) {
+    try {
+      // Await: wacht op de Promise van translateText
+      const translated = await translateText(char.description, lang ?? getLang());
+      if (descEl) {
+        descEl.style.fontStyle = 'normal';
+        descEl.textContent = translated;
+      }
+    } catch {
+      if (descEl) descEl.textContent = char.description;
+    }
+  } else {
+    if (descEl) { descEl.style.fontStyle = 'normal'; descEl.textContent = t('noDesc'); }
+  }
+
+  // Event: favoriet knop in de modal
+  document.getElementById('modal-fav-btn')?.addEventListener('click', () => {
+    const added = toggleFavorite({
+      id: char.id, name: char.name, image: char.image,
+      race: char.race, ki: char.ki, maxKi: char.maxKi,
+      affiliation: char.affiliation, gender: char.gender,
+    });
+    showToast(added ? t('addedFav', char.name) : t('removedFav', char.name));
+    updateFavBadge();
+    closeModal();
+  });
+};
+
+// MODAL SLUITEN
+export const closeModal = () => {
+  document.getElementById('detail-modal').classList.add('hidden');
+  document.body.style.overflow = '';
 };
