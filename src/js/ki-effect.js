@@ -56,7 +56,7 @@ export const initKiEffect = () => {
     color:     KI_COLORS[Math.floor(Math.random() * KI_COLORS.length)], // Willekeurige kleur
     pulse:     randomBetween(0, Math.PI * 2),   // Begin van de pulsatie
     pulseSpeed: randomBetween(0.02, 0.06),      // Snelheid van de pulsatie
-  });
+});
 
   // Array van alle actieve deeltjes aanmaken
   let particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
@@ -77,4 +77,106 @@ export const initKiEffect = () => {
 // Array van alle actieve bliksem lijnen
   let bolts = Array.from({ length: BOLT_COUNT }, createBolt);
 
-  
+  // ANIMATIE LOOP — wordt 60x per seconde uitgevoerd
+  const draw = () => {
+    // Canvas volledig leegmaken voor het nieuwe frame
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // === LAAG 1: Zachte Ki aura gloed in de achtergrond ===
+    // Hulpfunctie om een radiale gloed te tekenen
+    const drawAura = (x, y, radius, color) => {
+      // Maak een radiale kleurverloop van het midden naar buiten
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grad.addColorStop(0, color + '0.06)'); // Iets zichtbaar in het midden
+      grad.addColorStop(1, color + '0)');   // Volledig doorzichtig aan de rand
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    // Drie aura's op verschillende posities
+    drawAura(canvas.width * 0.15, canvas.height * 0.5,  300, 'rgba(249,115,22,');
+    drawAura(canvas.width * 0.85, canvas.height * 0.3,  250, 'rgba(251,191,36,');
+    drawAura(canvas.width * 0.5,  canvas.height * 0.8,  200, 'rgba(255,140,30,');
+
+    // === LAAG 2: Zwevende Ki deeltjes ===
+    // Techniek: forEach iteratie over array
+    particles.forEach((p, i) => {
+      // Pulserende grootte berekenen met sinus functie
+      p.pulse += p.pulseSpeed;
+      const pr = p.r + Math.sin(p.pulse) * 1.5;
+
+      // Gloed rondom het deeltje (groot, doorzichtig)
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, pr * 3);
+      grad.addColorStop(0, p.color + p.alpha + ')');
+      grad.addColorStop(1, p.color + '0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, pr * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Kern van het deeltje (klein, meer opaque)
+      ctx.fillStyle = p.color + Math.min(p.alpha * 2, 1) + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, pr, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Deeltje verplaatsen
+      p.x     += p.vx;
+      p.y     += p.vy;
+      p.alpha += p.dalpha; // Langzaam vervaagen
+
+      // Deeltje resetten als het vervaagd is of buiten het scherm
+      if (p.alpha <= 0 || p.y < -10 || p.x < -10 || p.x > canvas.width + 10) {
+        particles[i]   = createParticle();
+        particles[i].y = canvas.height + 10; // Laat het van onderaan beginnen
+      }
+    });
+
+    // === LAAG 3: Energie bliksem lijnen ===
+    bolts.forEach((b, i) => {
+      b.life++; // Leeftijd verhogen per frame
+
+      // Berekening van doorzichtigheid: fade in dan fade out
+      const progress = b.life / b.maxLife;
+      const a = progress < 0.3
+        ? progress / 0.3              // Eerste 30%: fade in
+        : 1 - (progress - 0.3) / 0.7; // Laatste 70%: fade out
+
+      // Teken de bliksem lijn
+      ctx.save(); // Huidige stijl bewaren
+      ctx.strokeStyle = b.color + (b.alpha * a) + ')';
+      ctx.lineWidth   = randomBetween(0.5, 1.5);
+      ctx.shadowColor = b.color + '0.3)';
+      ctx.shadowBlur  = 6;
+      ctx.beginPath();
+      ctx.moveTo(b.x, b.y);
+
+      // Gebroken lijn tekenen voor een bliksem effect
+      // Elk segment wijkt iets af van de hoofdrichting
+      let cx = b.x, cy = b.y;
+      const segments = 5;
+      for (let s = 0; s < segments; s++) {
+        const nx = cx + Math.cos(b.angle + randomBetween(-0.5, 0.5)) * (b.len / segments);
+        const ny = cy + Math.sin(b.angle + randomBetween(-0.5, 0.5)) * (b.len / segments);
+        ctx.lineTo(nx, ny);
+        cx = nx;
+        cy = ny;
+      }
+      ctx.stroke();
+      ctx.restore(); // Stijl herstellen
+
+      // Bliksem resetten als zijn levensduur voorbij is
+      if (b.life >= b.maxLife) {
+        bolts[i] = createBolt();
+      }
+    });
+
+    // Vraag de browser om de volgende animatie frame
+    // Dit is een callback function die zichzelf herhaalt
+    requestAnimationFrame(draw);
+  };
+
+  // Start de animatie loop
+  draw();
