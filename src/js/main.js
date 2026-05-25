@@ -283,6 +283,8 @@ retryBtn.addEventListener('click', () => switchSection(state.section));
 // APP OPSTARTEN
 // Laadt voorkeuren en start de applicatie
 const init = async () => {
+  localStorage.removeItem('db_cache_chars');
+  localStorage.removeItem('db_cache_planets');
   const prefs = getPreferences(); // Opgeslagen voorkeuren ophalen
 
   // Thema instellen (bewaard of standaard donker)
