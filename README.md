@@ -1,5 +1,9 @@
 #  Dragon Ball Universe
 
+Auteur: Rafy
+Schooljaar: 2025-2026
+Vak: Web Advanced
+
 > Interactieve Single Page Application — Web Advanced (TI1)
 
 Dragon Ball Universe is een interactieve webapplicatie waarmee je het Dragon Ball universum kan verkennen. De app haalt live data op via de Dragon Ball API en laat je personages en planeten browsen, filteren, sorteren en bewaren als favoriet. Beschrijvingen worden automatisch vertaald vanuit het Spaans via de MyMemory API.
