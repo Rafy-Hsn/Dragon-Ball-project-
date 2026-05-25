@@ -1,4 +1,4 @@
-// taal.js - Taalkeuze & automatische vertaling
+// Lang.js - Taalkeuze & automatische vertaling
 //Dit bestand beheert de 3 talen van de applicatie (NL, EN, FR).
 
 import { savePreference, getPreferences } from './storage.js';

@@ -62,6 +62,7 @@ export const initKiEffect = () => {
   let particles = Array.from({ length: PARTICLE_COUNT }, createParticle);
 
   // Een nieuwe bliksem lijn aanmaken
+
   const createBolt = () => ({
     x:       randomBetween(0, canvas.width),
     y:       randomBetween(0, canvas.height),
@@ -72,8 +73,8 @@ export const initKiEffect = () => {
     maxLife: randomBetween(40, 80),         // Hoe lang de lijn leeft
     color:   KI_COLORS[Math.floor(Math.random() * KI_COLORS.length)],
   }); 
-}
- 
+
+  
 // Array van alle actieve bliksem lijnen
   let bolts = Array.from({ length: BOLT_COUNT }, createBolt);
 
@@ -180,3 +181,4 @@ export const initKiEffect = () => {
 
   // Start de animatie loop
   draw();
+};
