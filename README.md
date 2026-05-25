@@ -1,7 +1,9 @@
 #  Dragon Ball Universe
 
 Auteur: Rafy
+
 Schooljaar: 2025-2026
+
 Vak: Web Advanced
 
 > Interactieve Single Page Application — Web Advanced (TI1)
